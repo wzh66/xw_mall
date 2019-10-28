@@ -1,12 +1,13 @@
 {
 	"description": "项目配置文件。",
 	"setting": {
-		"urlCheck": false,
+		"urlCheck": true,
 		"es6": true,
 		"enhance": true,
 		"postcss": false,
 		"minified": true,
 		"newFeature": true,
+		"coverView": true,
 		"nodeModules": false,
 		"autoAudits": false,
 		"checkInvalidKey": true,
@@ -19,8 +20,8 @@
 		}
 	},
 	"compileType": "miniprogram",
-	"libVersion": "2.7.7",
-	"appid": "wxa46b09d413fbcaff",
+	"libVersion": "2.9.0",
+	"appid": "wx925dc4346ecec36d",
 	"projectname": "%E5%A4%A9%E4%BD%BF%E7%AB%A5%E8%A3%85",
 	"scripts": {},
 	"simulatorType": "wechat",
