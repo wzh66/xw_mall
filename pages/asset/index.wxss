@@ -16,17 +16,17 @@
 
 .btn-view {
   text-align: right;
-  height: 70rpx;
+  /*height: 70rpx;*/
   background-color: #e85654;
   padding-right:40rpx;
-  padding-bottom:30rpx;  
+  padding-bottom:30rpx;
 }
 .btn-view .btn {
   border-color: #fff !important;
   color:#fff !important;
 }
 .btn-view .bth-right {
-  margin-left:20rpx;  
+  margin-left:20rpx;
 }
 .btn-hover {
   border-color: #fff;
