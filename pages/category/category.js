@@ -3,184 +3,113 @@
 const WXAPI = require('../../wxapi/main')
 
 Page({
-
   /**
    * 页面的初始数据
    */
   data: {
     categories: [],
-    goodsWrap: [],
-    categorySelected: "",
-    goodsToView: "",
-    categoryToView: "",
+    categorySelected: {
+      name: '',
+      id: '70437'
+    },
+    currentGoods: [],
+    onLoadStatus: true,
+    scrolltop: 0,
+    currentCategory:''
   },
-
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function(options) {
-
-    this.initData();
+  onLoad: function (options) {
+    this.categories();
   },
-  initData() {
-
-    let that = this;
-    wx.showNavigationBarLoading();
-    WXAPI.goodsCategory().then(function(res) {
-
-      var categories = [];
-      if (res.code == 0) {
-        for (var i = 0; i < res.data.length; i++) {
-
-          let item = res.data[i];
-
-          item.scrollId = "s" + item.id;
-          categories.push(item);
-
-          if (i == 0) {
-
-            that.setData({
-              categorySelected: item.scrollId,
-            })
-
-          }
+  async categories() {
+    wx.showLoading({
+      title: '加载中',
+    })
+    const res = await WXAPI.goodsCategory()
+    wx.hideLoading()
+    let categories = [];
+    let categoryName = '';
+    let categoryId = '';
+    if (res.code == 0) {
+      for (let i = 0; i < res.data.length; i++) {
+        let item = res.data[i];
+        categories.push(item);
+        if (i == 0) {
+          categoryName = item.name;
+          categoryId = item.id;
         }
       }
-      that.setData({
-        categories: categories,
-
-      });
-      console.log(categories);
-      that.getGoodsList(0);
-    }).catch((e) => {
-
-      wx.hideNavigationBarLoading();
+    }
+    this.setData({
+      categories: categories,
+      categorySelected: {
+        name: categoryName,
+        id: categoryId
+      }
     });
-
+    this.categoryInfo(this.data.categorySelected.id)
+    this.getGoodsList();
   },
-  getGoodsList: function(categoryId, append) {
-
-    let that = this;
-
-    WXAPI.goods({
-      categoryId: "",
+  async categoryInfo(id){
+    const res =await WXAPI.goodsCategoryInfo(id)
+    if(res.code == 0){
+      this.setData({
+        currentCategory: res.data.info.name
+      })
+    }
+  },
+  async getGoodsList() {
+    wx.showLoading({
+      title: '加载中',
+    })
+    const res = await WXAPI.goods({
+      categoryId: this.data.categorySelected.id,
       page: 1,
       pageSize: 100000
-    }).then(function(res) {
-      if (res.code == 404 || res.code == 700) {
-
-        return
-      }
-      let goodsWrap = [];
-
-
-      that.data.categories.forEach((o, index) => {
-
-        let wrap = {};
-        wrap.id = o.id;
-        wrap.scrollId = "s" + o.id;
-        wrap.name = o.name;
-        let goods = [];
-
-        wrap.goods = goods;
-        res.data.forEach((item, i) => {
-
-          if (item.categoryId == wrap.id) {
-
-            goods.push(item)
-          }
-        })
-
-        goodsWrap.push(wrap);
-      })
-
-
-
-      that.setData({
-        goodsWrap: goodsWrap,
+    })
+    wx.hideLoading()
+    if (res.code == 700) {
+      this.setData({
+        currentGoods: null
       });
-
-      console.log(goodsWrap);
-
-      wx.hideNavigationBarLoading();
-    }).catch((e) => {
-
-      wx.hideNavigationBarLoading();
+      return
+    }
+    this.setData({
+      currentGoods: res.data
     });
   },
-  toDetailsTap: function(e) {
+  toDetailsTap: function (e) {
     wx.navigateTo({
       url: "/pages/goods-details/index?id=" + e.currentTarget.dataset.id
     })
   },
-  onCategoryClick: function(e) {
-
-    let id = e.currentTarget.dataset.id;
-    this.categoryClick = true;
-    this.setData({
-      goodsToView: id,
-      categorySelected: id,
-    })
-
-  },
-  scroll: function(e) {
-
-    if (this.categoryClick){
-      this.categoryClick = false;
-      return;
-    }
-
-    let scrollTop = e.detail.scrollTop;
-
-    let that = this;
-
-    let offset = 0;
-    let isBreak = false;
-
-    for (let g = 0; g < this.data.goodsWrap.length; g++) {
-
-      let goodWrap = this.data.goodsWrap[g];
-
-      offset += 30;
-
-      if (scrollTop <= offset) {
-
-        if (this.data.categoryToView != goodWrap.scrollId) {
-          this.setData({
-            categorySelected: goodWrap.scrollId,
-            categoryToView: goodWrap.scrollId,
-          })
-        }
-
-        break;
-      }
-
-
-      for (let i = 0; i < goodWrap.goods.length; i++) {
-
-        offset += 91;
-
-        if (scrollTop <= offset) {
-
-          if (this.data.categoryToView != goodWrap.scrollId) {
-            this.setData({
-              categorySelected: goodWrap.scrollId,
-              categoryToView: goodWrap.scrollId,
-            })
-          }
-
-          isBreak = true;
+  onCategoryClick: function (e) {
+    var that = this;
+    var id = e.target.dataset.id;
+    if (id === that.data.categorySelected.id) {
+      that.setData({
+        scrolltop: 0,
+      })
+    } else {
+      var categoryName = '';
+      for (var i = 0; i < that.data.categories.length; i++) {
+        let item = that.data.categories[i];
+        if (item.id == id) {
+          categoryName = item.name;
           break;
         }
       }
-
-      if (isBreak){
-        break;
-      }
-
-
+      that.setData({
+        categorySelected: {
+          name: categoryName,
+          id: id
+        },
+        scrolltop: 0
+      });
+      that.getGoodsList();
+      that.categoryInfo(that.data.categorySelected.id);
     }
-
-  
   }
 })

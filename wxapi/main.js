@@ -154,6 +154,11 @@ module.exports = {
   goodsCategory: () => {
     return request('/shop/goods/category/all', true, 'get')
   },
+  goodsCategoryInfo: (id) => {
+    return request('/shop/goods/category/info', true, 'get',{
+      id
+    })
+  },
   goods: (data) => {
     return request('/shop/goods/list', true, 'post', data)
   },

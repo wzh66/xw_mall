@@ -1,7 +1,7 @@
 {
 	"description": "项目配置文件。",
 	"setting": {
-		"urlCheck": true,
+		"urlCheck": false,
 		"es6": true,
 		"enhance": true,
 		"postcss": false,
@@ -22,7 +22,7 @@
 	"compileType": "miniprogram",
 	"libVersion": "2.9.0",
 	"appid": "wx925dc4346ecec36d",
-	"projectname": "%E5%A4%A9%E4%BD%BF%E7%AB%A5%E8%A3%85",
+	"projectname": "%E8%AE%AF%E5%BE%AE%E5%95%86%E5%9F%8E",
 	"scripts": {},
 	"simulatorType": "wechat",
 	"simulatorPluginLibVersion": {},
@@ -40,6 +40,10 @@
 			"list": []
 		},
 		"game": {
+			"current": -1,
+			"list": []
+		},
+		"gamePlugin": {
 			"current": -1,
 			"list": []
 		},
@@ -99,6 +103,13 @@
 					"id": -1,
 					"name": "分销中心",
 					"pathName": "pages/fx/apply-status",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/category/category",
+					"pathName": "pages/category/category",
 					"scene": null
 				}
 			]
